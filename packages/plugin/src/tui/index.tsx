@@ -91,6 +91,14 @@ const tui: TuiPlugin = async (api, _options, _meta) => {
 const v2Setup = async (
   context: TuiV2Plugin.Context,
 ): Promise<TuiV2Plugin.Cleanup> => {
+  // The transition line (OpenCode 1.18.29–1.19.3) can load this TUI module
+  // through both the legacy loader and the early definition host. That host
+  // predates the RPC domain; the legacy leg already renders dialogs there, so
+  // this leg stands down when the RPC client is unavailable.
+  if (typeof context.client?.rpc !== "function") {
+    return () => {};
+  }
+
   const rpc = context.client.rpc(PetsRpc);
   const locationDirectory = context.location?.directory;
 

@@ -25,6 +25,7 @@
 - [x] 4.2 `ctx.rpc.register(PetsRpc, {})` with silent degradation when unavailable
 - [x] 4.3 TUI leg: subscribe `PetsRpc` events, filter by location directory, 3 s dialog auto-close
 - [x] 4.4 Cleanup: abort the SSE subscription and dispose the controller
+- [x] 4.5 Stand down both V2 legs on pre-RPC transition hosts (1.18.29–1.19.3) so the legacy hooks remain the only leg
 
 ## 5. Event generations
 
@@ -45,7 +46,7 @@
 - [x] 7.1 Local directory target loads on OpenCode 2.0.30 ("loading plugin" + setup side effects in server logs)
 - [x] 7.2 Live TUI: `/pet` shows the launch dialog with 3 s auto-close, spawns the overlay, and toggles visibility
 - [x] 7.3 `/pet` does not reach the model on V2
-- [ ] 7.4 Optional: V1 regression run on OpenCode 1.18.29 (environment-dependent)
+- [x] 7.4 V1 regression: headless load verified on OpenCode 1.18.29 and 1.19.3 (legacy hooks run; V2 legs stand down on pre-RPC hosts)
 
 ## 8. Documentation
 

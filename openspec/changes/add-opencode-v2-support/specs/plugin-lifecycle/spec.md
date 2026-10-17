@@ -61,6 +61,12 @@ The plugin SHALL call `ensureOverlayInstalled(log, toast)` during initialization
 - **THEN** the V2 setup subscribes to `dialog` and `toast` events on `PetsRpc` through `context.client.rpc(PetsRpc)`
 - **AND** events are rendered via `context.ui.dialog.alert` (auto-closed after 3 seconds through a generation-guarded `dialog.clear()`) and `context.ui.toast.show`
 
+#### Scenario: Pre-RPC TUI hosts stand down
+
+- **WHEN** the early definition TUI host (OpenCode 1.18.29–1.19.3, no `client.rpc`) loads the module
+- **THEN** the V2 TUI setup returns a no-op cleanup
+- **AND** the V1 keymap dialogs remain the only renderer on that host
+
 ### Requirement: V2 server leg runs through the V2 plugin context
 
 The V2 `setup(ctx)` implementation SHALL:
@@ -90,6 +96,12 @@ When RPC registration fails, the plugin SHALL log a warning and continue with si
 
 - **WHEN** OpenCode disposes the V2 plugin
 - **THEN** the event subscription is aborted and the controller is disposed (overlay killed, IPC client closed, config watcher stopped)
+
+#### Scenario: Pre-RPC transition hosts stand down
+
+- **WHEN** OpenCode 1.18.29–1.19.3 loads the module through its early definition host (one without the RPC domain)
+- **THEN** `setup` logs a debug line and returns a no-op cleanup without creating a controller
+- **AND** the legacy V1 hooks remain the only active leg so no duplicate controller or overlay runs
 
 ### Requirement: Notification orchestration per generation
 

@@ -16,8 +16,21 @@ export const v2Setup = async (ctx: Plugin.Context): Promise<Plugin.Cleanup> => {
     console.error(`[opencode-pets] ${level}: ${message}${suffix}`);
   };
 
-  // RPC lets the server leg drive the TUI leg's dialogs and toasts. When no
-  // RPC host is available, notifications degrade to silent no-ops.
+  // The transition line (OpenCode 1.18.29–1.19.3) loads the same config entry
+  // twice: once through the legacy V1 loader and once through the early
+  // definition host. That host predates the RPC domain, and the legacy leg
+  // already provides the full feature set there (command, dialogs, toasts), so
+  // this leg stands down to avoid a duplicate controller on those hosts.
+  if (typeof ctx.rpc?.register !== "function") {
+    log(
+      "debug",
+      "Pre-RPC host detected — V2 leg disabled (legacy hooks handle this session)",
+    );
+    return () => {};
+  }
+
+  // RPC lets the server leg drive the TUI leg's dialogs and toasts. When the
+  // RPC host refuses registration, notifications degrade to silent no-ops.
   const registration = await (async () => {
     try {
       return await ctx.rpc.register(PetsRpc, {});
